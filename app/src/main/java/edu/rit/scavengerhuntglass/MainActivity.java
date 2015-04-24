@@ -103,8 +103,9 @@ public class MainActivity extends Activity {
                 .setFootnote("Other Team's Score: 0")
                 .setTimestamp("0:00");
 
-        mainCard = new CardBuilder(this, CardBuilder.Layout.TEXT)
-                .setText("Target 1, Clue 1: This would be the first clue.")
+
+        mainCard = new CardBuilder(this, CardBuilder.Layout.EMBED_INSIDE)
+                .setEmbeddedLayout(R.layout.activity_main)
                 .setFootnote("Other Team's Score: 0")
                 .setTimestamp("0:00");
 
@@ -173,15 +174,20 @@ public class MainActivity extends Activity {
                     scan();
                 }
                 else if (position == 1) {
-                    mainCard.setText("Target 1, Clue 2: This would be the second clue.");
-                    View mainCard = mAdapter.getView(0, view, parent);
+                    View mainView = mainCard.getView();
+                    TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+                    //Toast.makeText(getApplicationContext(), clue.getText(), Toast.LENGTH_LONG).show();
+                    clue.setText("This would be the second clue to the first target.");
+
+                    //mainCard.setText("Target 1, Clue 2: This would be the second clue.");
+                    //View mainCard = mAdapter.getView(0, view, parent);
                     //showNextClue(mainCard);
                     mCardScrollView.setSelection(0);
-                    mAdapter.notifyDataSetChanged();
+                    //mAdapter.notifyDataSetChanged();
                 }
                 else if (position == 2) {
                    //this currently changes the background of the Clue+ card, not sure why...
-                    View mainView = mAdapter.getView(0, view, parent);
+                    View mainView = mainCard.getView();
                     mainView.setBackgroundColor(Color.RED);
                     //turnOnGPS(mainCard);
                     mCardScrollView.setSelection(0);
@@ -189,7 +195,13 @@ public class MainActivity extends Activity {
 
                 }
                 else if (position == 3) {
-                    mainCard.setText("Target 2, Clue 1: This would be the next target clue.");
+                    View mainView = mainCard.getView();
+                    TextView target = (TextView) mainView.findViewById(R.id.current_target);
+                    TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+                    target.setText("Target: 2/10");
+                    clue.setText("This would be the first clue to the second target.");
+
+                    //mainCard.setText("Target 2, Clue 1: This would be the next target clue.");
                     //skip(view);
                     mCardScrollView.setSelection(0);
 

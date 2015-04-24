@@ -1,60 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout"
+<!-- Copyright (C) 2014 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     >
+    <!--android:background="#ffff0000"-->
 
-    <RelativeLayout
-        android:id="@+id/body_layout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/glass_card_body_height"
-        android:layout_marginLeft="@dimen/glass_card_margin"
-        android:layout_marginTop="@dimen/glass_card_margin"
-        android:layout_marginRight="@dimen/glass_card_margin"
-        tools:ignore="UselessLeaf"
-        >
-
-        <!-- Put your widgets inside this RelativeLayout. -->
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/footer_container"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
-        android:layout_marginLeft="@dimen/glass_card_margin"
-        android:layout_marginBottom="@dimen/glass_card_footer_margin"
-        android:layout_marginRight="@dimen/glass_card_margin"
-        android:orientation="horizontal"
-        >
+        android:id="@+id/current_target"
+        android:text="Target: 1/10"
+        />
 
-        <!-- The footer view will grow to fit as much content as possible while the
-             timestamp view keeps a fixed width. If the footer text is too long, it
-             will be ellipsized with a 40px margin between it and the timestamp. -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Where you will find free new paper? Near cross road."
+        android:id="@+id/clue_text"
+        />
 
-        <TextView
-            android:id="@+id/footer"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            />
 
-        <TextView
-            android:id="@+id/timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/glass_card_margin"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            />
-
-    </LinearLayout>
-
-</FrameLayout>
+</LinearLayout>
