@@ -2,6 +2,7 @@ package edu.rit.scavengerhuntglass;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,11 +34,13 @@ public class MainActivity extends Activity {
     private CardScrollView mCardScrollView;
     private GameCardScrollAdapter mAdapter;
 
-    private CardBuilder loginCard;
+    //private CardBuilder loginCard;
     private CardBuilder mainCard;
     private CardBuilder clueLifeline;
     private CardBuilder tempLifeline;
     private CardBuilder skipLifeline;
+
+    private View mainView;
 
     static final int QR_SCAN_RESULT = 0;
 
@@ -98,10 +102,10 @@ public class MainActivity extends Activity {
     private void createCards() {
         mCards = new ArrayList<CardBuilder>();
 
-        loginCard = new CardBuilder(this, CardBuilder.Layout.TEXT)
+        /*loginCard = new CardBuilder(this, CardBuilder.Layout.TEXT)
                 .setText("Tap when you're ready to begin!")
                 .setFootnote("Other Team's Score: 0")
-                .setTimestamp("0:00");
+                .setTimestamp("0:00");*/
 
 
         mainCard = new CardBuilder(this, CardBuilder.Layout.EMBED_INSIDE)
@@ -125,7 +129,7 @@ public class MainActivity extends Activity {
                 .setTimestamp("0:00");
 
 
-        mCards.add(loginCard);
+        mCards.add(mainCard);
     }
 
     private class GameCardScrollAdapter extends CardScrollAdapter {
@@ -161,47 +165,44 @@ public class MainActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //if it's the main card, open up the QR code scanner
                 if (position == 0 && !gameStarted) {
-                    mCards.add(mainCard);
                     mCards.add(clueLifeline);
                     mCards.add(tempLifeline);
                     mCards.add(skipLifeline);
-                    mCards.remove(0);
                     gameStarted = true;
                     mAdapter.notifyDataSetChanged();
 
+                    //save reference to main card's view
+                    mainView = mAdapter.getView(position, view, parent);
+
+                    //set target
+                    TextView target = (TextView) mainView.findViewById(R.id.current_target);
+                    target.setText("Target: 1/10");
+
+                    //set first clue for first target
+                    TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+                    clue.setText("This is the first clue.");
                 }
                 else if (position == 0 && gameStarted) {
                     scan();
                 }
-                else if (position == 1) {
-                    View mainView = mainCard.getView();
+                else if (position == 1) { //clue+ lifeline
                     TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
-                    //Toast.makeText(getApplicationContext(), clue.getText(), Toast.LENGTH_LONG).show();
                     clue.setText("This would be the second clue to the first target.");
-
-                    //mainCard.setText("Target 1, Clue 2: This would be the second clue.");
-                    //View mainCard = mAdapter.getView(0, view, parent);
-                    //showNextClue(mainCard);
                     mCardScrollView.setSelection(0);
-                    //mAdapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                 }
-                else if (position == 2) {
-                   //this currently changes the background of the Clue+ card, not sure why...
-                    View mainView = mainCard.getView();
+                else if (position == 2) { //temp lifeline
                     mainView.setBackgroundColor(Color.RED);
                     //turnOnGPS(mainCard);
                     mCardScrollView.setSelection(0);
                     mAdapter.notifyDataSetChanged();
 
                 }
-                else if (position == 3) {
-                    View mainView = mainCard.getView();
+                else if (position == 3) { //skip lifeline
                     TextView target = (TextView) mainView.findViewById(R.id.current_target);
                     TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
                     target.setText("Target: 2/10");
                     clue.setText("This would be the first clue to the second target.");
-
-                    //mainCard.setText("Target 2, Clue 1: This would be the next target clue.");
                     //skip(view);
                     mCardScrollView.setSelection(0);
 
@@ -229,9 +230,10 @@ public class MainActivity extends Activity {
             String contents = intent.getStringExtra("SCAN_RESULT");
             //String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 
+            // Handle successful scan
             Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_LONG).show();
 
-            // Handle successful scan
+
 
         } else if (resultCode == RESULT_CANCELED) {
             // Handle cancel
