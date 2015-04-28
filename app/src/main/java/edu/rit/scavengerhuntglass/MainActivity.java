@@ -89,6 +89,54 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, locationListener);
+        if (location!=null) {
+            userLog = location.getLongitude();
+            userLat = location.getLatitude();
+        }
+        //create location clues
+        location_clues = new String[3][3];
+        location_clues[0][0] = "Where is Location #1? Clue 1";
+        location_clues[0][1] = "Where is Location #1? Clue 2";
+        location_clues[0][2] = "Where is Location #1? Clue 3";
+
+        location_clues[1][0] = "Where is Location #2? Clue 1";
+        location_clues[1][1] = "Where is Location #2? Clue 2";
+        location_clues[1][2] = "Where is Location #2? Clue 3";
+
+        location_clues[2][0] = "Where is Location #3? Clue 1";
+        location_clues[2][1] = "Where is Location #3? Clue 2";
+        location_clues[2][2] = "Where is Location #3? Clue 3";
+
+        location_QR = new String[3];
+        location_QR[0] ="70-1320";
+        // location_QR[0] = "Magic Lab";
+        location_QR[1] = "ATM at Crossroads"; //Approx
+        location_QR[2] = "Clock at Midnight Oil";
+
+        location_lat = new double[3];
+
+
+        location_lat[0]=43.084356;
+        //  location_lat[0] = 43.083113;
+        location_lat[1] = 43.082629;
+        location_lat[2] = 43.0826;
+
+
+        location_long = new double[3];
+        location_long[0] =-77.680944;
+        //  location_long[0] = -77.679786;
+        location_long[1] = -77.679788;
+        location_long[2] = -77.679678;
+
+        //need to start up the location counter
+        target_id = 0;
+        clue_id = 0;
+
+
+
         createCards();
 
         mCardScrollView = new CardScrollView(this);
@@ -114,19 +162,19 @@ public class MainActivity extends Activity {
                 .setTimestamp("0:00");
 
         clueLifeline = new CardBuilder(this, CardBuilder.Layout.TEXT)
-                .setText("Clue+")
-                .setFootnote("Other Team's Score: 0")
-                .setTimestamp("0:00");
+                .setText("Clue+");
+                //.setFootnote("Other Team's Score: 0")
+                //.setTimestamp("0:00");
 
         tempLifeline = new CardBuilder(this, CardBuilder.Layout.TEXT)
-                .setText("Temp")
-                .setFootnote("Other Team's Score: 0")
-                .setTimestamp("0:00");
+                .setText("Temp");
+                //.setFootnote("Other Team's Score: 0")
+                //.setTimestamp("0:00");
 
         skipLifeline = new CardBuilder(this, CardBuilder.Layout.TEXT)
-                .setText("Skip")
-                .setFootnote("Other Team's Score: 0")
-                .setTimestamp("0:00");
+                .setText("Skip");
+                //.setFootnote("Other Team's Score: 0")
+                //.setTimestamp("0:00");
 
 
         mCards.add(mainCard);
@@ -174,36 +222,35 @@ public class MainActivity extends Activity {
                     //save reference to main card's view
                     mainView = mAdapter.getView(position, view, parent);
 
+                    showFirstClue();
+
                     //set target
-                    TextView target = (TextView) mainView.findViewById(R.id.current_target);
+                    /*TextView target = (TextView) mainView.findViewById(R.id.current_target);
                     target.setText("Target: 1/10");
 
                     //set first clue for first target
                     TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
-                    clue.setText("This is the first clue.");
+                    clue.setText("This is the first clue.");*/
                 }
                 else if (position == 0 && gameStarted) {
                     scan();
                 }
                 else if (position == 1) { //clue+ lifeline
-                    TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
-                    clue.setText("This would be the second clue to the first target.");
+                    /*TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+                    clue.setText("This would be the second clue to the first target.");*/
+                    showNextClue();
                     mCardScrollView.setSelection(0);
                     mAdapter.notifyDataSetChanged();
                 }
                 else if (position == 2) { //temp lifeline
-                    mainView.setBackgroundColor(Color.RED);
-                    //turnOnGPS(mainCard);
+                    //mainView.setBackgroundColor(Color.RED);
+                    turnOnGPS();
                     mCardScrollView.setSelection(0);
                     mAdapter.notifyDataSetChanged();
 
                 }
                 else if (position == 3) { //skip lifeline
-                    TextView target = (TextView) mainView.findViewById(R.id.current_target);
-                    TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
-                    target.setText("Target: 2/10");
-                    clue.setText("This would be the first clue to the second target.");
-                    //skip(view);
+                    skip(view);
                     mCardScrollView.setSelection(0);
 
                     //remove the skip lifeline
@@ -241,27 +288,33 @@ public class MainActivity extends Activity {
         }
     }
 
-
-
     /*
- *  Shows the first clue.
- * */
-    public void showFirstClue(View v) {
-        /*TextView clue = (TextView)v;
-        clue.setText(location_clues[target_id][0]);
-        View cluePlus = findViewById(R.id.clue_plus);
-        cluePlus.setVisibility(View.VISIBLE);*/
+      *  Shows the first clue.
+      * */
+    public void showFirstClue() {
+        //TextView clue = (TextView)v;
+        clue_id = 0;
+        String target_string = String.valueOf(target_id + 1);
+
+        TextView target = (TextView) mainView.findViewById(R.id.current_target);
+        target.setText("Target: " + target_string + "/10");
+
+        //set first clue for first target
+        TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+        clue.setText(location_clues[target_id][clue_id]);
+        //View cluePlus = findViewById(R.id.clue_plus);
+        //cluePlus.setVisibility(View.VISIBLE);
     }
 
     /*
     *  Shows the next clue for current location.
     * */
-    public void showNextClue(View v) {
-        /*//TextView target_label = (TextView) findViewById(R.id.current_target);
-        //TextView clue = (TextView) findViewById(R.id.clue_text);
+    public void showNextClue() {
+        TextView target_label = (TextView) mainView.findViewById(R.id.current_target);
+        TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
         clue_id++;
         String target_string = String.valueOf(target_id + 1);
-        //target_label.setText("Target " + target_string + "/10:");
+        target_label.setText("Target " + target_string + "/10:");
         switch(clue_id){
             case 0: clue.setText(location_clues[target_id][0]);
                 break;
@@ -273,79 +326,51 @@ public class MainActivity extends Activity {
             case 2: clue.setText(location_clues[target_id][0]+ "\n"+ location_clues[target_id][1]+ "\n"+ location_clues[target_id][2]);
                 break;
             default: clue.setText(location_clues[target_id][0]+ "\n"+ location_clues[target_id][1]+ "\n"+ location_clues[target_id][2] +"\n No more clues!");
-                View cluePlus = findViewById(R.id.clue_plus);
-                cluePlus.setVisibility(View.GONE);
-        }*/
-
-
-    }
-
-    /*
-    *  Skip - can be only used once in the game.
-    *  need to add alert dialog to confirm skipping.
-    * */
-    public void skip(View v){
-        //showWarning(MainActivity.this, "Confirmation Message", "You are sure that you want to skip? It can be used once.", "Yes", "No", v).show();
-        showNextLocation();
-    }
-
-    /*
-*  Show the next location.
-* */
-    private void showNextLocation() {
-        /*gps = false; // turning off the GPS temp feature until user wants to use it.
-        //TextView target_label = (TextView) findViewById(R.id.current_target);
-        //TextView clue = (TextView) findViewById(R.id.clue_text);
-
-        if (target_id < 2) {
-            target_id++;
-            //clue.setText(location_clues[target_id][0]);
-
-            String target_string = String.valueOf(target_id + 1);
-
-            //target_label.setText("Target " + target_string + "/10:");
+                //View cluePlus = findViewById(R.id.clue_plus);
+                //cluePlus.setVisibility(View.GONE);
         }
-        else {
-            //target_label.setText("Done!");
-            //clue.setText("No more clues!");
-        }*/
 
+
+    }
+
+
+
+    public void doGpsView(double lat, double log){
+        if(gps) {
+            tempGPS(lat, log);
+            counter++;
+            System.out.println("GPS is turned on.");
+        }
+    }
+
+    public void turnOnGPS() {
+        gps = true; // turn on the GPS feature.
+        //view = v;
+        location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location == null) {
+            System.out.println("Currently, your phone does not support GPS");
+           // alertNoGPS(MainActivity.this, "Warning Message", "Currently, your phone does not support GPS", "Ok", v).show();
+        } else {
+            doGpsView(userLat, userLog);
+        }
     }
 
     /* warning Dialog box
-    * */
-    private AlertDialog showWarning(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, CharSequence buttonNo, View view) {
+       * */
+    private  AlertDialog alertNoGPS(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, View view) {
         final View v = view;
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
         downloadDialog.setTitle(title);
         downloadDialog.setMessage(message);
         downloadDialog.setPositiveButton(buttonYes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialogInterface, int i) {
-                //View cluePlus = findViewById(R.id.skip);
-                //cluePlus.setVisibility(View.GONE);
-                showNextLocation();
             }
         });
-        downloadDialog.setNegativeButton(buttonNo, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-            }
-        });
+
         return downloadDialog.show();
     }
-
-    public void doGpsView(double lat, double log){
-        /*if(gps) {
-            tempGPS(lat, log);
-            counter++;
-        }*/
-    }
-
-    public void turnOnGPS(View v){
-        /*gps = true; // turn on the GPS feature.
-        view = v;*/
-    }
     public void tempGPS(double lat,double log){
-        /*userLat = lat;
+        userLat = lat;
         userLog = log;
         // double userLat = gpsTemp.getUserLat();//location_lat[0];//input location manually for testing. -> should get actual location -> //gpsTemp.getUserLat();
         // double userLog = gpsTemp.getUserLog();//location_long[0];//gpsTemp.getUserLog();
@@ -353,19 +378,18 @@ public class MainActivity extends Activity {
         double result  = distFrom(userLat,userLog, location_lat[target_id],location_long[target_id]);
         System.out.println("location_lat[target_id]:"+location_lat[target_id]);// for testing purposes. need to set [target_id]
         System.out.println("location_long[target_id]:"+location_long[target_id]);
-        System.out.println("result:"+result);
-        System.out.println("convert:"+convertKMtoInches(result));
-        //  double distance = convertKMtoInches(result);
+        //  System.out.println("result:"+result);
+        //   System.out.println("convert:"+convertKMtoInches(result));
+        double distance = convertKMtoInches(result);
         //update background color
         float[] results = new float[4];
-        location.distanceBetween(userLat,userLog,43.07996217,-77.61915561,results );
-        String color = hexColors((results[0]*3.28084));
-        View main = findViewById(R.id.Main_Layout);
-        main.setBackgroundColor(Color.parseColor(color));
+        location.distanceBetween(userLat,userLog,location_lat[target_id],location_long[target_id],results );
+        String color = hexColors((int)(results[0]*5));
+        System.out.println("distance to... "+results[0]*5);
+        mainView.setBackgroundColor(Color.parseColor(color));
 
-        TextView  text = (TextView) findViewById(R.id.other_score);
-
-        text.setText("lat:"+userLat+" log:"+userLog+" c"+counter+ "d"+((int)(results[0]*3.28084)));*/
+        //TextView text = (TextView) findViewById(R.id.other_score);
+        mainCard.setFootnote("lat:"+userLat+" log:"+userLog+" c"+counter+ "d:"+(results[0]*5));
     }
 
 
@@ -388,37 +412,38 @@ public class MainActivity extends Activity {
   * */
     public int convertKMtoInches (double km){
         System.out.println("Conv km:"+km);
-        double conv = 1000 / 0.3048;
-        double feet = Math.round((km*conv));
+        // double conv = 1000 / 0.3048;
+        double feet = Math.round((km*3280.8));
         return (int) feet;
     }
 
     /*
     * The colors change within 510 inches, if above it will stay blue.
     * */
-    public String hexColors(double distance){
+    public String hexColors(int distance){
         String color = "#";
         int blue = 0;
         String green = "00";
         int red = 0;
         if(distance >= 255){ //higher than 255 feet (blue hue)
-            red = (int)(510-distance); //how much red should blend in with blue.
+            red = (510-distance); //how much red should blend in with blue.
             if(red<= 0){
                 red = 0;
-            }else if(red>=255){
+            }else if(distance>=255){
                 red = 255;
             }
             blue = 255;
             System.out.println("red:"+red);
 
         }else{ //below 255 feet (red hue)
-            blue = (int)(distance); //how much blue should blend in with red.
-            if(blue<= 5 || distance == 0){
+            System.out.println(distance);
+            blue = (distance); //how much blue should blend in with red.
+            if(distance<= 10 || distance == 0){
                 blue = 0;
             }else if(blue>=255){
-                blue = 255;
+                //  blue = 255;
             }else{
-                blue =+ 50;
+                // blue =+ 50;
             }
             red = 255;
             System.out.println("blue:"+blue);
@@ -440,7 +465,57 @@ public class MainActivity extends Activity {
         return color;
     }
 
+    /*
+    *  Skip - can be only used once in the game.
+    *  need to add alert dialog to confirm skipping.
+    * */
+    public void skip(View v){
+        //showWarning(MainActivity.this, "Confirmation Message", "You are sure that you want to skip? It can be used once.", "Yes", "No", v).show();
+        showNextLocation();
+    }
 
+    /*
+    *  Show the next location.
+    * */
+    private void showNextLocation() {
+        gps = false; // turning off the GPS temp feature until user wants to use it.
+        TextView target_label = (TextView) mainView.findViewById(R.id.current_target);
+        TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+
+        if (target_id < 2) {
+            target_id++;
+            // clue.setText(location_clues[target_id][0]);
+            showFirstClue();
+            String target_string = String.valueOf(target_id + 1);
+            target_label.setText("Target " + target_string + "/10:");
+        }
+        else {
+            target_label.setText("Done!");
+            clue.setText("No more clues!");
+        }
+
+    }
+
+    /* warning Dialog box
+    * */
+    /*private AlertDialog showWarning(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, CharSequence buttonNo, View view) {
+        final View v = view;
+        AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
+        downloadDialog.setTitle(title);
+        downloadDialog.setMessage(message);
+        downloadDialog.setPositiveButton(buttonYes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //View cluePlus = findViewById(R.id.skip);
+                //cluePlus.setVisibility(View.GONE);
+                showNextLocation();
+            }
+        });
+        downloadDialog.setNegativeButton(buttonNo, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
+        });
+        return downloadDialog.show();
+    }*/
 
 
     @Override
