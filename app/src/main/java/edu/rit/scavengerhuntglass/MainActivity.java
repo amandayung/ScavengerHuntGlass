@@ -211,7 +211,7 @@ public class MainActivity extends Activity {
         mCardScrollView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //if it's the main card, open up the QR code scanner
+                //start the game
                 if (position == 0 && !gameStarted) {
                     mCards.add(clueLifeline);
                     mCards.add(tempLifeline);
@@ -232,6 +232,7 @@ public class MainActivity extends Activity {
                     TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
                     clue.setText("This is the first clue.");*/
                 }
+                //if it's the main card, open up the QR code scanner
                 else if (position == 0 && gameStarted) {
                     scan();
                 }
@@ -278,7 +279,14 @@ public class MainActivity extends Activity {
             //String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 
             // Handle successful scan
-            Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_LONG).show();
+            if (contents.equals(location_QR[target_id])) {
+                Toast.makeText(getApplicationContext(), "Correct!", Toast.LENGTH_LONG).show();
+                showNextLocation();
+
+            }
+            else {
+            Toast.makeText(getApplicationContext(), "Sorry, incorrect! Try a different location!", Toast.LENGTH_LONG).show();
+            }
 
 
 
@@ -479,6 +487,7 @@ public class MainActivity extends Activity {
     * */
     private void showNextLocation() {
         gps = false; // turning off the GPS temp feature until user wants to use it.
+        mainView.setBackgroundColor(Color.BLACK);
         TextView target_label = (TextView) mainView.findViewById(R.id.current_target);
         TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
 
