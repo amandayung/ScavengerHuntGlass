@@ -10,6 +10,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +61,12 @@ public class MainActivity extends Activity {
     GPSTemperature gpsTemp;
     private View view;
     protected LocationManager locationManager;
+
+    private long startTime = 0L;
+    private Handler myHandler = new Handler();
+    long timeInMillies = 0L;
+    long timeSwap = 0L;
+    long finalTime = 0L;
 
     private final LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
@@ -221,6 +229,10 @@ public class MainActivity extends Activity {
 
                     //save reference to main card's view
                     mainView = mAdapter.getView(position, view, parent);
+
+                    //start timer
+                    startTime = SystemClock.uptimeMillis();
+                    myHandler.postDelayed(updateTimerMethod, 0);
 
                     showFirstClue();
 
@@ -504,6 +516,25 @@ public class MainActivity extends Activity {
         }
 
     }
+
+    private Runnable updateTimerMethod = new Runnable() {
+
+        public void run() {
+            timeInMillies = SystemClock.uptimeMillis() - startTime;
+            finalTime = timeSwap + timeInMillies;
+            finalTime=3600000-finalTime;
+
+            int seconds = (int) (finalTime / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+            int milliseconds = (int) (finalTime % 1000);
+            mainCard.setTimestamp("" + minutes + ":"
+                    + String.format("%02d", seconds));
+            myHandler.postDelayed(this, 0);
+            mAdapter.notifyDataSetChanged();
+        }
+
+    };
 
     /* warning Dialog box
     * */
