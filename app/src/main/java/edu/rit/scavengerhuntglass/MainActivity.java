@@ -45,9 +45,13 @@ public class MainActivity extends Activity {
     private View mainView;
 
     static final int QR_SCAN_RESULT = 0;
+    static final int GAME_TIME = 3600000;
 
     boolean gameStarted;
+    boolean timeUp;
     boolean hint;
+    static int score = 0;
+    public int target_score = 0;
     public String[][] location_clues;
     public String[] location_QR;
     public double[] location_lat;
@@ -99,45 +103,95 @@ public class MainActivity extends Activity {
 
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 0, locationListener);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
         if (location!=null) {
             userLog = location.getLongitude();
             userLat = location.getLatitude();
         }
         //create location clues
-        location_clues = new String[3][3];
-        location_clues[0][0] = "Where is Location #1? Clue 1";
-        location_clues[0][1] = "Where is Location #1? Clue 2";
-        location_clues[0][2] = "Where is Location #1? Clue 3";
+        location_clues = new String[10][3];
+        location_clues[0][0] = "Where can you get a free copy of the New York Times?";
+        location_clues[0][1] = "You can also sit here next to a fireplace while looking at a giant clock.";
+        location_clues[0][2] = "You can also order coffee here.";
 
-        location_clues[1][0] = "Where is Location #2? Clue 1";
-        location_clues[1][1] = "Where is Location #2? Clue 2";
-        location_clues[1][2] = "Where is Location #2? Clue 3";
+        location_clues[1][0] = "What is known as Geek Heaven?";
+        location_clues[1][1] = "It is also known as the Student Innovation Hall.";
+        location_clues[1][2] = "It is surrounded by glass and is filled with projectors.";
 
-        location_clues[2][0] = "Where is Location #3? Clue 1";
-        location_clues[2][1] = "Where is Location #3? Clue 2";
-        location_clues[2][2] = "Where is Location #3? Clue 3";
+        location_clues[2][0] = "You can get your tan here.";
+        location_clues[2][1] = "You can look professional after getting service from this place.";
+        location_clues[2][2] = "This place will remove your dead cells or doing add-ons to your dead cells.";
 
-        location_QR = new String[3];
-        location_QR[0] ="70-1320";
-        // location_QR[0] = "Magic Lab";
-        location_QR[1] = "ATM at Crossroads"; //Approx
-        location_QR[2] = "Clock at Midnight Oil";
+        location_clues[3][0] = "You can order Western Union money orders here.";
+        location_clues[3][1] = "You can buy boxes here.";
+        location_clues[3][2] = "This place always close on Sunday.";
 
-        location_lat = new double[3];
+        location_clues[4][0] = "Where can you buy hand-made gifts?";
+        location_clues[4][1] = "Where can you buy hand-made desk clock?";
+        location_clues[4][2] = "Where can you buy glass pen?";
+
+        location_clues[5][0] = "Where can you find a wall covered in different languages?";
+        location_clues[5][1] = "Where should you go if you want to enroll other campus other than Rochester, NY?";
+        location_clues[5][2] = "Where should you go to gain your international experience?";
+
+        location_clues[6][0] = "Where can you find out about research about future everyday technologies?";
+        location_clues[6][1] = "You can see this building when looking out from the Student Innovation Center.";
+        location_clues[6][2] = "The building name is also a color.";
+
+        location_clues[7][0] = "Where can you seek out the dean for the College of Applied Science and Technology?";
+        location_clues[7][1] = "The same building also includes the office for Women in Technology.";
+        location_clues[7][2] = "You’ll find the building entrance near a fountain.";
+
+        location_clues[8][0] = "You will see a white board of RIT Aero design team.";
+        location_clues[8][1] = "Where can you find a model of rocket launch vehicle?";
+        location_clues[8][2] = "Where can you find a model of formula one racecar?";
+
+        location_clues[9][0] = "Where can you find computer science, information technology, and software engineering?";
+        location_clues[9][1] = "You can see the Dean’s office from here.";
+        location_clues[9][2] = "You can get a “byte” at CTRL ALT DELi.";
 
 
-        location_lat[0]=43.084356;
-        //  location_lat[0] = 43.083113;
-        location_lat[1] = 43.082629;
-        location_lat[2] = 43.0826;
+
+        location_QR = new String[10];
+        location_QR[0] = "1"; //Midnight Oil
+        location_QR[1] = "2"; //Magic Lab
+        location_QR[2] = "3"; //Shear Global Salon
+        location_QR[3] = "4"; //Post Office
+        location_QR[4] = "5"; //Shop One
+        location_QR[5] = "6"; //Study Abroad Center
+        location_QR[6] = "7"; //Orange Hall/FET Lab
+        location_QR[7] = "8"; //Color Science
+        location_QR[8] = "9"; //Aviation Lab
+        location_QR[9] = "10"; //Entrance of Golisano Hall
 
 
-        location_long = new double[3];
-        location_long[0] =-77.680944;
-        //  location_long[0] = -77.679786;
-        location_long[1] = -77.679788;
-        location_long[2] = -77.679678;
+        location_lat = new double[10];
+
+
+        location_lat[0]=43.082541; //Midnight Oil
+        location_lat[1] = 43.083085; //Magic Lab
+        location_lat[2] = 43.082657;//Shear Global Salon
+        location_lat[3] = 43.082597; //Post Office
+        location_lat[4] = 43.082762; //Shop One
+        location_lat[5] = 43.083172;//Study Abroad Center
+        location_lat[6] = 43.083729 ; //Orange Hall/FET Lab
+        location_lat[7] = 43.082548; //Color Science
+        location_lat[8] = 43.084624; //Aviation Lab
+        location_lat[9] = 43.084658;  //Entrance of Golisano Hall
+
+
+
+        location_long = new double[10];
+        location_long[0] =-77.679751; //Midnight Oil
+        location_long[1] = -77.679854;//Magic Lab
+        location_long[2] = -77.680929;//Shear Global Salon
+        location_long[3] = -77.680686; //Post Office
+        location_long[4] =  -77.680389; //Shop One
+        location_long[5] = -77.680978; //Study Abroad Center
+        location_long[6] = -77.678980; //Orange Hall/FET Lab
+        location_long[7] = -77.678461; //Color Science
+        location_long[8] = -77.678362; //Aviation Lab
+        location_long[9] = -77.679969;  //Entrance of Golisano Hall
 
         //need to start up the location counter
         target_id = 0;
@@ -166,22 +220,22 @@ public class MainActivity extends Activity {
 
         mainCard = new CardBuilder(this, CardBuilder.Layout.EMBED_INSIDE)
                 .setEmbeddedLayout(R.layout.activity_main)
-                .setFootnote("Other Team's Score: 0")
-                .setTimestamp("0:00");
+                .setFootnote("Team Score: 0")
+                .setTimestamp("60:00");
 
         clueLifeline = new CardBuilder(this, CardBuilder.Layout.TEXT)
-                .setText("Clue+");
-                //.setFootnote("Other Team's Score: 0")
+                .setText("Clue+")
+                .setFootnote("Lifeline");
                 //.setTimestamp("0:00");
 
         tempLifeline = new CardBuilder(this, CardBuilder.Layout.TEXT)
-                .setText("Temp");
-                //.setFootnote("Other Team's Score: 0")
+                .setText("Temp")
+                .setFootnote("Lifeline");
                 //.setTimestamp("0:00");
 
         skipLifeline = new CardBuilder(this, CardBuilder.Layout.TEXT)
-                .setText("Skip");
-                //.setFootnote("Other Team's Score: 0")
+                .setText("Skip")
+                .setFootnote("Lifeline (you can only use skip once!)");
                 //.setTimestamp("0:00");
 
 
@@ -219,57 +273,56 @@ public class MainActivity extends Activity {
         mCardScrollView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //start the game
-                if (position == 0 && !gameStarted) {
-                    mCards.add(clueLifeline);
-                    mCards.add(tempLifeline);
-                    mCards.add(skipLifeline);
-                    gameStarted = true;
-                    mAdapter.notifyDataSetChanged();
+                if (!timeUp) {
+                    //start the game
+                    if (position == 0 && !gameStarted) {
+                        mCards.add(clueLifeline);
+                        mCards.add(tempLifeline);
+                        mCards.add(skipLifeline);
+                        gameStarted = true;
+                        mAdapter.notifyDataSetChanged();
 
-                    //save reference to main card's view
-                    mainView = mAdapter.getView(position, view, parent);
+                        //save reference to main card's view
+                        mainView = mAdapter.getView(position, view, parent);
 
-                    //start timer
-                    startTime = SystemClock.uptimeMillis();
-                    myHandler.postDelayed(updateTimerMethod, 0);
+                        //start timer
+                        startTime = SystemClock.uptimeMillis();
+                        myHandler.postDelayed(updateTimerMethod, 0);
 
-                    showFirstClue();
+                        showFirstClue();
 
-                    //set target
+                        //set target
                     /*TextView target = (TextView) mainView.findViewById(R.id.current_target);
                     target.setText("Target: 1/10");
 
                     //set first clue for first target
                     TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
                     clue.setText("This is the first clue.");*/
-                }
-                //if it's the main card, open up the QR code scanner
-                else if (position == 0 && gameStarted) {
-                    scan();
-                }
-                else if (position == 1) { //clue+ lifeline
+                    }
+                    //if it's the main card, open up the QR code scanner
+                    else if (position == 0 && gameStarted) {
+                        scan();
+                    } else if (position == 1) { //clue+ lifeline
                     /*TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
                     clue.setText("This would be the second clue to the first target.");*/
-                    showNextClue();
-                    mCardScrollView.setSelection(0);
-                    mAdapter.notifyDataSetChanged();
-                }
-                else if (position == 2) { //temp lifeline
-                    //mainView.setBackgroundColor(Color.RED);
-                    turnOnGPS();
-                    mCardScrollView.setSelection(0);
-                    mAdapter.notifyDataSetChanged();
+                        showNextClue();
+                        mCardScrollView.setSelection(0);
+                        mAdapter.notifyDataSetChanged();
+                    } else if (position == 2) { //temp lifeline
+                        //mainView.setBackgroundColor(Color.RED);
+                        turnOnGPS();
+                        mCardScrollView.setSelection(0);
+                        mAdapter.notifyDataSetChanged();
 
-                }
-                else if (position == 3) { //skip lifeline
-                    skip(view);
-                    mCardScrollView.setSelection(0);
+                    } else if (position == 3) { //skip lifeline
+                        skip(view);
+                        mCardScrollView.setSelection(0);
 
-                    //remove the skip lifeline
-                    mCards.remove(3);
-                    mAdapter.notifyDataSetChanged();
+                        //remove the skip lifeline
+                        mCards.remove(3);
+                        mAdapter.notifyDataSetChanged();
 
+                    }
                 }
             }
         });
@@ -314,6 +367,7 @@ public class MainActivity extends Activity {
     public void showFirstClue() {
         //TextView clue = (TextView)v;
         clue_id = 0;
+        target_score = 10;
         String target_string = String.valueOf(target_id + 1);
 
         TextView target = (TextView) mainView.findViewById(R.id.current_target);
@@ -336,16 +390,18 @@ public class MainActivity extends Activity {
         String target_string = String.valueOf(target_id + 1);
         target_label.setText("Target " + target_string + "/10:");
         switch(clue_id){
-            case 0: clue.setText(location_clues[target_id][0]);
+            case 0: clue.setText("Clue 1: " + location_clues[target_id][0]);
                 break;
             case 1:
-                String message = location_clues[target_id][0]+ "\n"+ location_clues[target_id][1];
+                String message = "Clue 2: " + location_clues[target_id][1];
+                target_score = target_score - 2;
                 clue.setText(message);
-                System.out.println(message);
+                //System.out.println(message);
                 break;
-            case 2: clue.setText(location_clues[target_id][0]+ "\n"+ location_clues[target_id][1]+ "\n"+ location_clues[target_id][2]);
+            case 2: clue.setText("Clue 3: " + location_clues[target_id][2]);
+                target_score = target_score - 2;
                 break;
-            default: clue.setText(location_clues[target_id][0]+ "\n"+ location_clues[target_id][1]+ "\n"+ location_clues[target_id][2] +"\n No more clues!");
+            default: clue.setText("Clue 3: " + location_clues[target_id][2] +"\n\n No more clues!");
                 //View cluePlus = findViewById(R.id.clue_plus);
                 //cluePlus.setVisibility(View.GONE);
         }
@@ -368,16 +424,17 @@ public class MainActivity extends Activity {
         //view = v;
         location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location == null) {
-            System.out.println("Currently, your phone does not support GPS");
+            Toast.makeText(getApplicationContext(), "Currently, your Glass does not support GPS", Toast.LENGTH_LONG).show();
            // alertNoGPS(MainActivity.this, "Warning Message", "Currently, your phone does not support GPS", "Ok", v).show();
         } else {
+            target_score = target_score - 5;
             doGpsView(userLat, userLog);
         }
     }
 
     /* warning Dialog box
        * */
-    private  AlertDialog alertNoGPS(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, View view) {
+   /* private  AlertDialog alertNoGPS(final Activity act, CharSequence title, CharSequence message, CharSequence buttonYes, View view) {
         final View v = view;
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(act);
         downloadDialog.setTitle(title);
@@ -388,7 +445,9 @@ public class MainActivity extends Activity {
         });
 
         return downloadDialog.show();
-    }
+    }*/
+
+
     public void tempGPS(double lat,double log){
         userLat = lat;
         userLog = log;
@@ -491,6 +550,7 @@ public class MainActivity extends Activity {
     * */
     public void skip(View v){
         //showWarning(MainActivity.this, "Confirmation Message", "You are sure that you want to skip? It can be used once.", "Yes", "No", v).show();
+        target_score = target_score - 2;
         showNextLocation();
     }
 
@@ -498,12 +558,15 @@ public class MainActivity extends Activity {
     *  Show the next location.
     * */
     private void showNextLocation() {
+        score = score + target_score;
         gps = false; // turning off the GPS temp feature until user wants to use it.
         mainView.setBackgroundColor(Color.BLACK);
         TextView target_label = (TextView) mainView.findViewById(R.id.current_target);
         TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
 
-        if (target_id < 2) {
+        mainCard.setFootnote("Team Score: " + score);
+
+        if (target_id < 9) {
             target_id++;
             // clue.setText(location_clues[target_id][0]);
             showFirstClue();
@@ -511,8 +574,7 @@ public class MainActivity extends Activity {
             target_label.setText("Target " + target_string + "/10:");
         }
         else {
-            target_label.setText("Done!");
-            clue.setText("No more clues!");
+            endGame();
         }
 
     }
@@ -522,7 +584,14 @@ public class MainActivity extends Activity {
         public void run() {
             timeInMillies = SystemClock.uptimeMillis() - startTime;
             finalTime = timeSwap + timeInMillies;
-            finalTime=3600000-finalTime;
+            finalTime=GAME_TIME-finalTime;
+
+
+            if (finalTime <= 0) {
+                endGame();
+                timeUp = true;
+                return;
+            }
 
             int seconds = (int) (finalTime / 1000);
             int minutes = seconds / 60;
@@ -532,9 +601,27 @@ public class MainActivity extends Activity {
                     + String.format("%02d", seconds));
             myHandler.postDelayed(this, 0);
             mAdapter.notifyDataSetChanged();
+
         }
 
     };
+
+    private void endGame() {
+        TextView target = (TextView) mainView.findViewById(R.id.current_target);
+        target.setText("Congratulations!");
+
+        TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+        clue.setText("You did it.");
+        mainCard.setFootnote("Your Team's Score: " + score);
+        mainCard.setTimestamp("Other Team's Score: 0");
+
+        mCardScrollView.setSelection(0);
+
+        while (mCards.size() > 1) {
+            mCards.remove(1);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
 
     /* warning Dialog box
     * */
