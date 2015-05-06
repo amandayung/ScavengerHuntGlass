@@ -458,12 +458,12 @@ public class MainActivity extends Activity {
         // double userLat = gpsTemp.getUserLat();//location_lat[0];//input location manually for testing. -> should get actual location -> //gpsTemp.getUserLat();
         // double userLog = gpsTemp.getUserLog();//location_long[0];//gpsTemp.getUserLog();
         //  int result  = gpsTemp.calculateDistance(userLat,userLog, location_lat[target_id],location_long[target_id]);
-        double result  = distFrom(userLat,userLog, location_lat[target_id],location_long[target_id]);
+        //double result  = distFrom(userLat,userLog, location_lat[target_id],location_long[target_id]);
         System.out.println("location_lat[target_id]:"+location_lat[target_id]);// for testing purposes. need to set [target_id]
         System.out.println("location_long[target_id]:"+location_long[target_id]);
         //  System.out.println("result:"+result);
         //   System.out.println("convert:"+convertKMtoInches(result));
-        double distance = convertKMtoInches(result);
+        //double distance = convertKMtoInches(result);
         //update background color
         float[] results = new float[4];
         location.distanceBetween(userLat,userLog,location_lat[target_id],location_long[target_id],results );
