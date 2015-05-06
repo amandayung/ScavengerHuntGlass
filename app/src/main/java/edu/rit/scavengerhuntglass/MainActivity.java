@@ -45,8 +45,9 @@ public class MainActivity extends Activity {
     private View mainView;
 
     static final int QR_SCAN_RESULT = 0;
-    static final int GAME_TIME = 3600000;
+    static final int GAME_TIME = 2700000;
 
+    String team_name;
     boolean gameStarted;
     boolean timeUp;
     boolean hint;
@@ -221,7 +222,7 @@ public class MainActivity extends Activity {
         mainCard = new CardBuilder(this, CardBuilder.Layout.EMBED_INSIDE)
                 .setEmbeddedLayout(R.layout.activity_main)
                 .setFootnote("Team Score: 0")
-                .setTimestamp("60:00");
+                .setTimestamp("45:00");
 
         clueLifeline = new CardBuilder(this, CardBuilder.Layout.TEXT)
                 .setText("Clue+")
@@ -288,6 +289,9 @@ public class MainActivity extends Activity {
                         //start timer
                         startTime = SystemClock.uptimeMillis();
                         myHandler.postDelayed(updateTimerMethod, 0);
+
+                        NewTeam myTeam = new NewTeam();
+                        team_name = myTeam.createTeam();
 
                         showFirstClue();
 
@@ -508,7 +512,7 @@ public class MainActivity extends Activity {
             red = (510-distance); //how much red should blend in with blue.
             if(red<= 0){
                 red = 0;
-            }else if(distance>=255){
+            }else if(red>=255){
                 red = 255;
             }
             blue = 255;
@@ -519,8 +523,8 @@ public class MainActivity extends Activity {
             blue = (distance); //how much blue should blend in with red.
             if(distance<= 10 || distance == 0){
                 blue = 0;
-            }else if(blue>=255){
-                //  blue = 255;
+            }else if(distance>=255){
+                blue = 255;
             }else{
                 // blue =+ 50;
             }
@@ -565,6 +569,9 @@ public class MainActivity extends Activity {
         TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
 
         mainCard.setFootnote("Team Score: " + score);
+
+        UpdateScore myScore = new UpdateScore();
+        myScore.execute(team_name, "" + score);
 
         if (target_id < 9) {
             target_id++;
