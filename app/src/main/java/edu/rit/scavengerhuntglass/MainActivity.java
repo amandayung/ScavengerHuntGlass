@@ -473,7 +473,7 @@ public class MainActivity extends Activity {
         mainView.setBackgroundColor(Color.parseColor(color));
 
         TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
-        clue.setText("Distance away: "+(results[0]*5));
+        clue.setText("Distance away: "+ (Math.round(results[0]*5)));
         mAdapter.notifyDataSetChanged();
 
         //TextView text = (TextView) findViewById(R.id.other_score);
