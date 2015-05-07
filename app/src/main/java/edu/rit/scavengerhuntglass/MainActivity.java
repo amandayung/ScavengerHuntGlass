@@ -168,7 +168,6 @@ public class MainActivity extends Activity {
 
         location_lat = new double[10];
 
-
         location_lat[0]=43.082541; //Midnight Oil
         location_lat[1] = 43.083085; //Magic Lab
         location_lat[2] = 43.082657;//Shear Global Salon
@@ -290,8 +289,8 @@ public class MainActivity extends Activity {
                         startTime = SystemClock.uptimeMillis();
                         myHandler.postDelayed(updateTimerMethod, 0);
 
-                        NewTeam myTeam = new NewTeam();
-                        team_name = myTeam.createTeam();
+                        //NewTeam myTeam = new NewTeam();
+                        //team_name = myTeam.createTeam();
 
                         showFirstClue();
 
@@ -424,14 +423,16 @@ public class MainActivity extends Activity {
     }
 
     public void turnOnGPS() {
-        gps = true; // turn on the GPS feature.
         //view = v;
         location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location == null) {
             Toast.makeText(getApplicationContext(), "Currently, your Glass does not support GPS", Toast.LENGTH_LONG).show();
            // alertNoGPS(MainActivity.this, "Warning Message", "Currently, your phone does not support GPS", "Ok", v).show();
         } else {
-            target_score = target_score - 5;
+            if (!gps) { //take 5 points off once
+                target_score = target_score - 5;
+            }
+            gps = true;
             doGpsView(userLat, userLog);
         }
     }
@@ -471,8 +472,12 @@ public class MainActivity extends Activity {
         System.out.println("distance to... "+results[0]*5);
         mainView.setBackgroundColor(Color.parseColor(color));
 
+        TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+        clue.setText("Distance away: "+(results[0]*5));
+        mAdapter.notifyDataSetChanged();
+
         //TextView text = (TextView) findViewById(R.id.other_score);
-        mainCard.setFootnote("lat:"+userLat+" log:"+userLog+" c"+counter+ "d:"+(results[0]*5));
+        //mainCard.setFootnote("lat:"+userLat+" log:"+userLog+" c"+counter+ "d:"+(results[0]*5));
     }
 
 
@@ -563,22 +568,23 @@ public class MainActivity extends Activity {
     * */
     private void showNextLocation() {
         score = score + target_score;
+        target_score = 10;
         gps = false; // turning off the GPS temp feature until user wants to use it.
         mainView.setBackgroundColor(Color.BLACK);
         TextView target_label = (TextView) mainView.findViewById(R.id.current_target);
-        TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
+        //TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
 
         mainCard.setFootnote("Team Score: " + score);
 
-        UpdateScore myScore = new UpdateScore();
-        myScore.execute(team_name, "" + score);
+        //UpdateScore myScore = new UpdateScore();
+        //myScore.execute(team_name, "" + score);
 
         if (target_id < 9) {
             target_id++;
             // clue.setText(location_clues[target_id][0]);
             showFirstClue();
-            String target_string = String.valueOf(target_id + 1);
-            target_label.setText("Target " + target_string + "/10:");
+            //String target_string = String.valueOf(target_id + 1);
+            //target_label.setText("Target " + target_string + "/10:");
         }
         else {
             endGame();
@@ -620,7 +626,7 @@ public class MainActivity extends Activity {
         TextView clue = (TextView) mainView.findViewById(R.id.clue_text);
         clue.setText("You did it.");
         mainCard.setFootnote("Your Team's Score: " + score);
-        mainCard.setTimestamp("Other Team's Score: 0");
+        mainCard.setTimestamp("Done");
 
         mCardScrollView.setSelection(0);
 
