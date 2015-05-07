@@ -559,7 +559,7 @@ public class MainActivity extends Activity {
     * */
     public void skip(View v){
         //showWarning(MainActivity.this, "Confirmation Message", "You are sure that you want to skip? It can be used once.", "Yes", "No", v).show();
-        target_score = target_score - 2;
+        target_score = 5;
         showNextLocation();
     }
 
